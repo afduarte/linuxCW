@@ -1,15 +1,10 @@
-#!/bin/sh -x
+#!/bin/sh
 
 BIN=~/.recycle
-BINLIST=.bin-origin
-
 for file in $@
 do
-    if expr $(find ${BIN}/ -name $file | wc -l) -le 0  ; then
-        original=$(grep "$file" $BIN/$BINLIST | head -n 1)
-        if [ expr ${#original} -le 0 ] ; then  
-            echo ${original}
-        fi
-        
-    fi
+	filename=$(basename $file)
+	# Get the original filepath, redirect error into /dev/null so it doesn't mess the output. if it fails, the file is not in the bin...
+ 	# Restore the actual file and delete the hidden file. If it fails, echo error msg
+	original=$(cat ${BIN}/.${filename} 2>/dev/null) && mv ${BIN}/${filename} ${original} && rm ${BIN}/.${filename} && echo "${file} restored to path: ${original}" || echo "${file} not found in the bin"
 done

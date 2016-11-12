@@ -4,8 +4,6 @@
 BIN=~/.recycle
 ## Name of the resulting file if BIN exists as a file
 BINFILE="${BIN}-file"
-## Name of the file that will contain the list of all the removed files
-BINLIST=.bin-origin
 # BIN is a file, move it to BIN-file and create the BIN directory
 test -f "${BIN}" && mv ${BIN} ${BINFILE} && echo "renamed your file ${BIN} to ${BINFILE} and created ${BIN} as your recycle bin"
 
@@ -18,7 +16,7 @@ do
         echo "${file} doesn't exist"
         continue
     else
-        echo $(readlink -f $file) >> ${BIN}/${BINLIST}
+	echo $(readlink -f $file) > ${BIN}/.$(basename ${file})
         mv ${file} ${BIN}/ 
     fi
 done

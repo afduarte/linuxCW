@@ -3,8 +3,13 @@
 BIN=~/.recycle
 for file in $@
 do
-	filename=$(basename $file)
-	# Get the original filepath, redirect error into /dev/null so it doesn't mess the output. if it fails, the file is not in the bin...
- 	# Restore the actual file and delete the hidden file. If it fails, echo error msg
-	original=$(cat ${BIN}/.${filename} 2>/dev/null) && mkdir -p $(dirname ${original}) && mv ${BIN}/${filename} ${original} && rm ${BIN}/.${filename} && echo "${file} restored to path: ${original}" || echo "${file} not found in the bin"
+filename=$(basename $file)
+# Get the original filepath, redirect error into /dev/null so it doesn't mess the output. if it fails, the file is not in the bin...
+# Restore the actual file and delete the hidden file. If it fails, echo error msg
+original=$(head -n 1 ${BIN}/.${filename} 2>/dev/null) \
+&& mkdir -p $(dirname ${original}) \
+&& mv ${BIN}/${filename} ${original} \
+&& rm ${BIN}/.${filename} \
+&& echo "${file} restored to path: ${original}" \
+|| echo "${file} not found in the bin"
 done

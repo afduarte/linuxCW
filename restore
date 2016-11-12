@@ -1,0 +1,15 @@
+#!/bin/sh -x
+
+BIN=~/.recycle
+BINLIST=.bin-origin
+
+for file in $@
+do
+    if expr $(find ${BIN}/ -name $file | wc -l) -le 0  ; then
+        original=$(grep "$file" $BIN/$BINLIST | head -n 1)
+        if [ expr ${#original} -le 0 ] ; then  
+            echo ${original}
+        fi
+        
+    fi
+done

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+## Name of the recycle bin directory
+BIN=~/.recycle
+## Name of the resulting file if BIN exists as a file
+BINFILE="${BIN}-file"
+## Name of the file that will contain the list of all the removed files
+BINLIST=.bin-origin
+# BIN is a file, move it to BIN-file and create the BIN directory
+test -f "${BIN}" && mv ${BIN} ${BINFILE} && echo "renamed your file ${BIN} to ${BINFILE} and created ${BIN} as your recycle bin"
+
+## BIN doesn't exist
+test ! -e ${BIN} && mkdir -p ${BIN} 
+
+for file in $@
+do
+    if [ ! -e ${file} ] ; then
+        echo "${file} doesn't exist"
+        continue
+    else
+        echo $(readlink -f $file) >> ${BIN}/${BINLIST}
+        mv ${file} ${BIN}/ 
+    fi
+done

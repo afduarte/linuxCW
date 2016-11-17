@@ -1,9 +1,16 @@
 #!/bin/sh
 
+[ -z "$1" ] && echo "No arguments supplied" \
+&& echo "Usage: ${0} list/of files/to/delete" \
+&& echo "Accepts command line expansion arguments like '*', absolute paths and relative paths" \
+&& exit 1
+
 ## Name of the recycle bin directory
 BIN=~/.recycle
+
 ## Name of the resulting file if BIN exists as a file
 BINFILE="${BIN}-file"
+
 # BIN is a file, move it to BIN-file and create the BIN directory
 test -f "${BIN}" && mv ${BIN} ${BINFILE} && echo "renamed your file ${BIN} to ${BINFILE} and created ${BIN} as your recycle bin"
 
@@ -15,8 +22,9 @@ do
     if [ ! -e ${file} ] ; then
         echo "${file} doesn't exist"
         continue
-    else
+    else	
 	echo $(readlink -f $file) > ${BIN}/.$(basename ${file})
         mv ${file} ${BIN}/ 
+	echo "Deleted file: ${file}"
     fi
 done

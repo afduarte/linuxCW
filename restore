@@ -1,15 +1,33 @@
 #!/bin/sh
+[ -z "$1" ] && echo "No arguments supplied" \
+&& echo "Usage: ${0} list/of files/to/restore" \
+&& echo "Accepts absolute paths and relative paths" \
+&& exit 1
 
 BIN=~/.recycle
 for file in $@
 do
-filename=$(basename $file)
-# Get the original filepath, redirect error into /dev/null so it doesn't mess the output. if it fails, the file is not in the bin...
-# Restore the actual file and delete the hidden file. If it fails, echo error msg
-original=$(head -n 1 ${BIN}/.${filename} 2>/dev/null) \
-&& mkdir -p $(dirname ${original}) \
-&& mv ${BIN}/${filename} ${original} \
-&& rm ${BIN}/.${filename} \
-&& echo "${file} restored to path: ${original}" \
-|| echo "${file} not found in the bin"
+	filename=$(basename $file)
+	# Get the original filepath, redirect error into /dev/null so it doesn't mess the output. if it fails, the file is not in the bin...
+	# create the original directory if it doesn't exit
+	# 
+	original=$(head -n 1 ${BIN}/.${filename} 2>/dev/null)
+
+	[ -z "$original" ] && echo "${file} not found in the bin" && continue
+
+	mkdir -p $(dirname ${original})
+	
+	# Check if a file already exists in the destination with the same name.
+	if [ ! -e ${original} ] ; then
+		mv ${BIN}/${filename} ${original}
+		echo "restored file: ${filename}"
+	else
+		# If that's the case, move the file to restore into filename.bak
+		mv ${BIN}/${filename} ${original}.bak
+		echo "restored file: ${filename} to ${filename}.bak because ${filename} already existed"
+	fi
+	# Delete the file from the bin
+	rm ${BIN}/.${filename}
+	
+
 done

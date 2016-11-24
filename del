@@ -19,12 +19,12 @@ test ! -e ${BIN} && mkdir -p ${BIN}
 
 for file in $@
 do
-    if [ ! -e ${file} ] ; then
-        echo "${file} doesn't exist"
-        continue
-    else	
+	if [ ! -e ${file} ] ; then
+		echo "${file} doesn't exist"
+		continue
+	else
 	echo $(readlink -f $file) > ${BIN}/.$(basename ${file})
-        mv ${file} ${BIN}/ 
+		mv ${file} ${BIN}/ 
 	echo "Deleted file: ${file}"
-    fi
+	fi
 done
